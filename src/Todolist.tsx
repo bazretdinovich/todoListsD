@@ -19,6 +19,8 @@ type PropsType = {
     filter: FilterValuesType
     id: string
     delTodoList: (todolistId: string) => void
+    changeTaskTitle: (newTitle: string, tListId: string, taskId: string) => void
+    changeTodolistTitle: (newTitle: string, tListId: string) => void
 }
 
 export function Todolist(props: PropsType) {
@@ -57,9 +59,13 @@ export function Todolist(props: PropsType) {
         props.addTask(title, props.id)
     }
 
+    const changeTodolistTitle = (newTitle: string) => {
+        props.changeTodolistTitle(newTitle, props.id)
+    }
+
     return (
         <div>
-            <h3>{props.title}
+            <h3><EditableSpan title={props.title} onChange={changeTodolistTitle}/>
                 <button onClick={onTodoListDeleteHandler}>x</button>
             </h3>
             {/*<div>*/}
@@ -80,18 +86,22 @@ export function Todolist(props: PropsType) {
                             props.removeTask(t.id, props.id)
                         }
 
-                        const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+                        const onChangeTitleHandler = (newTitle: string) => {
+                            props.changeTaskTitle(newTitle, props.id, t.id)
+                        }
+
+                        const onChangeStatusHandler = (event: ChangeEvent<HTMLInputElement>) => {
                             props.changeTaskStatus(t.id, event.currentTarget.checked, props.id)
                         }
 
                         return (
                             <li key={t.id} className={t.isDone ? "is-done" : ""}>
                                 <input
-                                    onChange={onChangeHandler}
+                                    onChange={onChangeStatusHandler}
                                     type="checkbox"
                                     checked={t.isDone}/>
                                 {/*<span>{t.title}</span>*/}
-                                <EditableSpan title={t.title}/>
+                                <EditableSpan title={t.title} onChange={onChangeTitleHandler}/>
                                 <button onClick={onremoveHandler}>x</button>
                             </li>
                         )
